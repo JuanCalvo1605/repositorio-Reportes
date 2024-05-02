@@ -1,7 +1,7 @@
 <template>
 	<aside :class="`${is_expanded ? 'is-expanded' : ''}`">
 		<div class="logo">
-			<img src="../assets/vue.svg" alt="Vue" /> 
+			<img :src="logo" alt="Vue" /> 
 		</div>
 
 		<div class="menu-toggle-wrap">
@@ -10,23 +10,19 @@
 			</button>
 		</div>
 
-		<h3>Menu</h3>
+		<h3>Menú</h3>
 		<div class="menu">
-			<router-link to="/" class="button">
+			<router-link to="/home" class="button">
 				<span class="material-icons">home</span>
-				<span class="text">Home</span>
+				<span class="text">Inicio</span>
 			</router-link>
 			<router-link to="/about" class="button">
-				<span class="material-icons">description</span>
-				<span class="text">About</span>
-			</router-link>
-			<router-link to="/team" class="button">
 				<span class="material-icons">group</span>
-				<span class="text">Team</span>
+				<span class="text">Usuarios</span>
 			</router-link>
-			<router-link to="/contact" class="button">
-				<span class="material-icons">email</span>
-				<span class="text">Contact</span>
+			<router-link to="/vistaReportes" class="button">
+				<span class="material-icons">incomplete_circle</span>
+				<span class="text">Reportes</span>
 			</router-link>
 		</div>
 
@@ -43,7 +39,7 @@
 
 <script setup>
 import { ref } from 'vue'
-
+import logo from '../assets/logoSF.png'
 
 const is_expanded = ref(localStorage.getItem("is_expanded") === "true")
 
