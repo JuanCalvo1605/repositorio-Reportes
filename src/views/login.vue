@@ -48,16 +48,17 @@ export default {
                 contra: this.contra
             }
         });
-        const { valido } = response.data;
-        console.log(this.contra,this.correo)
-        // Redirigir a la página de inicio si las credenciales son válidas
-        if (valido) {
+        
+        const { valido, error } = response.data;
+
+        if (error) {
+            this.error = error;  // Mostrar mensaje de error si existe
+        } else if (valido) {
             this.$router.push('/home');
-        } else {
-            this.error = 'Credenciales incorrectas';
         }
-        } catch (error){
-            console.log('error en',error)
+        } catch (error) {
+            console.error('Error en enviarCredenciales:', error);
+            this.error = 'Error de conexión';
         }
         }
     }

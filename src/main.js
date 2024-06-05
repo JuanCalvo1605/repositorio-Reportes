@@ -4,7 +4,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import Login from './views/login.vue';
 import home from './views/Home.vue';
 import vistaReportes from './views/vista_informes.vue';
-import reportes from './views/reportes.vue';
+import ReporteDetalle from './views/reportes.vue';
 
 //import { BootstrapVue } from 'bootstrap-vue'; // Solo importa BootstrapVue, no IconsPlugin
 import 'bootstrap/dist/css/bootstrap.css';
@@ -30,8 +30,9 @@ const router = createRouter({
             component: vistaReportes
         },
         {
-            path: '/reportes',
-            component: reportes
+            path: '/reportes-detalle/:id_reporte',
+            name: 'ReporteDetalle',
+            component: ReporteDetalle
         },
     ]
 });

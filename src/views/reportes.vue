@@ -4,7 +4,7 @@
     <div class="container">
         <h1 v-html="nombre"></h1>
         <div class="iframe-container">
-            <div v-html="codigoPBI" class="iframe-content"></div>
+            <div v-html="codigo" class="iframe-content"></div>
         </div>
     </div>
 </template>
@@ -13,23 +13,33 @@
 import sidebar from '../components/sidebar.vue';
 import axios from 'axios';
 export default {
+    name:'ReporteDetalle',
     components:{
         sidebar
     },
     data() {
+        
         return {
-            codigoPBI: ''
+            id: this.$route.params.id_reporte,
+            codigo: '',
+            nombre: ''
         };
     },
     mounted() {
+        console.log(this.id_reporte)
         this.obtenerCodigoPBI();
     },
     methods: {
         async obtenerCodigoPBI() {
             try {
-                const response = await axios.get('http://172.19.10.8:5000/informe');
-                this.codigoPBI = response.data.codigo_pwi; // Establecer el HTML del iframe
+                console.log('ID que se está enviando:', this.id);
+                const response = await axios.get('http://172.19.10.8:5000/informe',{
+                    params:{id_reporte: this.id}
+                });
+                this.codigo = response.data.codigo; // Establecer el HTML del iframe
                 this.nombre = response.data.nombre
+                console.log(this.nombre)
+                //this.codigoPBI = data.codigo_pwi;
             } catch (error) {
                 console.error('Error al obtener el código de Power BI:', error);
             }
@@ -49,16 +59,6 @@ export default {
         padding-top: 25px;
     }
 }
-
-/*
-.iframe-container {
-    position: relative;
-    width: 100%;
-    padding-top: 56.25%; /* Proporción 16:9 para un iframe responsive */
-    margin-bottom: 20px; /* Espacio entre el iframe y el título */
-    overflow: hidden; /* Evita que el iframe se desborde 
-}
-*/
 .iframe-content {
     position: absolute;
     top: 0;

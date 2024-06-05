@@ -2,11 +2,13 @@
     <sidebar />
     <div class="container">
         <h1 class="title">Reportes</h1>
-        <ul class="report-list">
-                <router-link  v-for="reporte in reportes" :key="reporte.codigo" to="/Reportes">
+        <ul class="report-list">  
+            <li v-for="reporte in reportes" :key="reporte.id_reporte"> 
+                <router-link :to="{name:'ReporteDetalle', params:{id_reporte: reporte.id_reporte}}">
                     <a>{{ reporte.nombre }}</a>
                 </router-link>
-            </ul>
+            </li>
+        </ul>
     </div>
 </template>
 
@@ -21,7 +23,7 @@ export default {
             reportes: []
         };
     },
-    mounted() {
+    created(){
         this.obtenerReportes();
     },
     methods: {
@@ -29,11 +31,13 @@ export default {
             try {
                 const response = await axios.get('http://172.19.10.8:5000/');
                 this.reportes  = response.data;
-                console.log(reports)
+                this.id_reporte = response.data
+                console.log(this.reportes)
             } catch (error) {
                 console.error('Error al obtener el código de Power BI:', error);
             }
         }
+        
     }
 }
 </script>

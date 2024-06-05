@@ -13,7 +13,12 @@ username = 'user_1'
 password = 'Andes2015*'
 connection_string = f'DRIVER=SQL Server;SERVER={server};DATABASE={database};UID={username};PWD={password}'
 
-
+    
+'''TODO   
+    1. recibir de parametro el nombre o el id del reporte para mostrarlo como titulo y como reporte
+    2. no dejar pasar por ruta sin haber ingresado al login
+        
+'''
 @app.route('/login', methods=['GET'])
 def obtener_credeciales():
     try:
@@ -26,17 +31,23 @@ def obtener_credeciales():
         conn = pyodbc.connect(connection_string)
         cursor = conn.cursor()
         cursor.execute("SELECT nombre,apellido,contraseña,correo FROM t_usuarios where correo = ? and contraseña = ?",(correo,password))
+        
         usuario = cursor.fetchone()
         
         if not usuario:
-            return jsonify({'valido': False}), 401
+            cursor.execute("SELECT correo FROM t_usuarios where correo = ?",(correo,))
+            usuario_existente = cursor.fetchone()
+            if not usuario_existente:
+                return jsonify({'error': 'Usuario no existe'}), 404
+            else:
+                return jsonify({'error': 'Credenciales incorrectas'}), 401
         
         print(correo,password)
         
         
         
         #nombre, apellido, password = cursor.fetchone()
-        conn.close()         
+        conn.close()
         
         # Si se encontró el usuario, devolver un booleano en True
         return jsonify({'valido': True})
@@ -51,7 +62,7 @@ def obtener_nombres():
         # Establecer la conexión
         conn = pyodbc.connect(connection_string)
         cursor = conn.cursor()
-        cursor.execute("SELECT nombre FROM t_reportes")
+        cursor.execute("SELECT id_reporte, nombre FROM t_reportes")
         
         # Obtener todas las filas de la consulta
         rows = cursor.fetchall()
@@ -60,9 +71,8 @@ def obtener_nombres():
         
         informes = []
         for row in rows:
-            informe = {'nombre': row.nombre}
+            informe = {'id_reporte': row.id_reporte,'nombre' : row.nombre}
             informes.append(informe)
-        
         conn.close()         
         
         # Retornar los datos como JSON
@@ -70,18 +80,25 @@ def obtener_nombres():
 
     except Exception as e:
         return f'Error: {e}', 500
-    
+
 @app.route('/informe', methods=['GET'])
 def obtener_reportes():
     try:
+        
+        id_reporte = request.args.get('id_reporte')
+        print(f'Recibido id_reporte: {id_reporte}')
         # Establecer la conexión
         conn = pyodbc.connect(connection_string)
         cursor = conn.cursor()
-        cursor.execute("SELECT codigo, nombre FROM t_reportes")
-        codigo_pwi, nombre = cursor.fetchone()
-        conn.close()         
-        # Retornar los datos como JSON
-        return jsonify({'codigo_pwi': codigo_pwi, 'nombre': nombre})
+        cursor.execute("SELECT codigo, nombre FROM t_reportes WHERE id_reporte = ?", (id_reporte,))
+        print(id_reporte)
+        row = cursor.fetchone()
+        conn.close()
+        
+        if row:
+            return jsonify({'codigo': row.codigo, 'nombre': row.nombre})
+        else:
+            return jsonify({'error': 'Reporte no encontrado'}), 404
     
     except Exception as e:
         return f'Error: {e}', 500
